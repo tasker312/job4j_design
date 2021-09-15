@@ -29,7 +29,6 @@ public class SimpleArrayList<T> implements List<T> {
         Objects.checkIndex(index, size);
         T oldValue = container[index];
         container[index] = newValue;
-        modCount++;
         return oldValue;
     }
 
