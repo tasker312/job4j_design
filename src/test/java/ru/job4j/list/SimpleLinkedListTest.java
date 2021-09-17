@@ -11,9 +11,8 @@ import java.util.NoSuchElementException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 
-
 public class SimpleLinkedListTest {
-    List<Integer> list;
+    private List<Integer> list;
 
     @Before
     public void setUp() {
