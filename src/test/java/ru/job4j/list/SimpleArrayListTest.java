@@ -10,8 +10,7 @@ import java.util.NoSuchElementException;
 import java.util.stream.IntStream;
 
 public class SimpleArrayListTest {
-
-    List<Integer> list;
+    private List<Integer> list;
 
     @Before
     public void initData() {

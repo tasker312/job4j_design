@@ -11,6 +11,10 @@
     <!-- See http://checkstyle.sf.net/config_sizes.html -->
     <module name="FileLength"/>
 
+    <module name="LineLength">
+        <property name="fileExtensions" value="java"/>
+        <property name="max" value="120"/>
+    </module>
     <!-- Checks for Headers                                -->
     <!-- See http://checkstyle.sf.net/config_header.html   -->
     <!-- <module name="Header"> -->
@@ -20,6 +24,17 @@
 
     <module name="TreeWalker">
 
+        <module name="DeclarationOrder"/>
+
+        <module name="EmptyLineSeparator">
+            <property name="tokens" value="
+            CLASS_DEF, ENUM_DEF, INTERFACE_DEF, CTOR_DEF, STATIC_INIT, INSTANCE_INIT, VARIABLE_DEF, METHOD_DEF"/>
+            <property name="allowNoEmptyLineBetweenFields" value="true"/>
+            <property name="allowMultipleEmptyLines" value="false"/>
+            <property name="allowMultipleEmptyLinesInsideClassMembers" value="false"/>
+        </module>
+
+        <module name="VisibilityModifier"/>
         <!-- Checks for Naming Conventions.                  -->
         <!-- See http://checkstyle.sf.net/config_naming.html -->
         <module name="ConstantName"/>
@@ -38,7 +53,7 @@
         <!-- See http://checkstyle.sf.net/config_sizes.html -->
         <!--<module name="LineLength"/>-->
         <module name="MethodLength"/>
-        <!--<module name="ParameterNumber"/>-->
+        <module name="ParameterNumber"/>
 
         <!-- Checks for whitespace                               -->
         <!-- See http://checkstyle.sf.net/config_whitespace.html -->

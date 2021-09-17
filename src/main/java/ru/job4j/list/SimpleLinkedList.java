@@ -77,8 +77,8 @@ public class SimpleLinkedList<E> implements List<E> {
     @Override
     public Iterator<E> iterator() {
         return new Iterator<>() {
-            final int expectedModCount = modCount;
-            Node<E> current = first;
+            private final int expectedModCount = modCount;
+            private Node<E> current = first;
 
             @Override
             public boolean hasNext() {
@@ -98,5 +98,17 @@ public class SimpleLinkedList<E> implements List<E> {
                 return value;
             }
         };
+    }
+
+    private static class Node<E> {
+        private E value;
+        private Node<E> prev;
+        private Node<E> next;
+
+        public Node(Node<E> prev, E value, Node<E> next) {
+            this.prev = prev;
+            this.value = value;
+            this.next = next;
+        }
     }
 }
