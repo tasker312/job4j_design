@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -13,6 +14,13 @@ public class ListUtilsTest {
     @Test
     public void whenAddBefore() {
         List<Integer> input = new ArrayList<>(Arrays.asList(1, 3));
+        ListUtils.addBefore(input, 1, 2);
+        assertThat(input, is(List.of(1, 2, 3)));
+    }
+
+    @Test
+    public void whenAddBeforeLinked() {
+        List<Integer> input = new LinkedList<>(Arrays.asList(1, 3));
         ListUtils.addBefore(input, 1, 2);
         assertThat(input, is(List.of(1, 2, 3)));
     }

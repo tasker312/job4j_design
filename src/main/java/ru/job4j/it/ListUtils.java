@@ -1,29 +1,19 @@
 package ru.job4j.it;
 
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Objects;
 import java.util.function.Predicate;
 
 public class ListUtils {
     public static <T> void addBefore(List<T> list, int index, T value) {
         Objects.checkIndex(index, list.size());
-        ListIterator<T> i = list.listIterator();
-        while (i.hasNext()) {
-            if (i.nextIndex() == index) {
-                i.add(value);
-                break;
-            }
-            i.next();
-        }
+        var iter = list.listIterator(index);
+        iter.add(value);
     }
 
     public static <T> void addAfter(List<T> list, int index, T value) {
         Objects.checkIndex(index, list.size());
-        var iter = list.listIterator();
-        while (iter.previousIndex() != index) {
-            iter.next();
-        }
+        var iter = list.listIterator(index + 1);
         iter.add(value);
     }
 
