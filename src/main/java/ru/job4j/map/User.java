@@ -54,10 +54,10 @@ public class User {
                 && Objects.equals(birthday, user.birthday);
     }
 
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(name, children, birthday);
-//    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, children, birthday);
+    }
 
     public static void main(String[] args) {
         User user1 = new User("Ivan", 0, LocalDate.of(2020, 10, 10));
