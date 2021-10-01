@@ -7,9 +7,9 @@ import java.time.LocalDate;
 import java.util.ConcurrentModificationException;
 import java.util.NoSuchElementException;
 
-import static org.junit.Assert.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.junit.Assert.*;
 
 public class SimpleMapTest {
     private SimpleMap<String, User> map;
@@ -62,6 +62,13 @@ public class SimpleMapTest {
     }
 
     @Test
+    public void getByCollisionKey() {
+        SimpleMap<Integer, Integer> integers = new SimpleMap<>();
+        integers.put(0, 0);
+        assertNull(integers.get(8));
+    }
+
+    @Test
     public void removeExistingKey() {
         map.put(user1.getName(), user1);
         assertTrue(map.remove(user1.getName()));
@@ -71,6 +78,13 @@ public class SimpleMapTest {
     @Test
     public void removeNotExistingKey() {
         assertFalse(map.remove("Hello"));
+    }
+
+    @Test
+    public void removeByCollisionKey() {
+        SimpleMap<Integer, Integer> integers = new SimpleMap<>();
+        integers.put(0, 0);
+        assertFalse(integers.remove(8));
     }
 
     @Test

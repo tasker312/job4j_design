@@ -50,14 +50,14 @@ public class SimpleMap<K, V> implements Map<K, V> {
 
     @Override
     public V get(K key) {
-        var res = table[indexFor(hash(Objects.hashCode(key)))];
-        return res == null ? null : res.value;
+        var entry = table[indexFor(hash(Objects.hashCode(key)))];
+        return (entry == null || !Objects.equals(key, entry.key)) ? null : entry.value;
     }
 
     @Override
     public boolean remove(K key) {
         int index = indexFor(hash(Objects.hashCode(key)));
-        if (table[index] == null) {
+        if (table[index] == null || !Objects.equals(key, table[index].key)) {
             return false;
         }
         table[index] = null;
