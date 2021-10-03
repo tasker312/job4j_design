@@ -1,17 +1,13 @@
 package ru.job4j.io;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Analysis {
     public void unavailable(String source, String target) {
         try (BufferedReader br = new BufferedReader(new FileReader(source));
              PrintWriter out = new PrintWriter(new FileOutputStream(target))) {
-            List<String> notices = new ArrayList<>();
-            br.lines().forEach(notices::add);
             boolean isAvailable = true;
-            for (String notice : notices) {
+            for (String notice = br.readLine(); notice != null; notice = br.readLine()) {
                 String[] data = notice.split(" ");
                 int status = Integer.parseInt(data[0]);
                 String date = data[1];
