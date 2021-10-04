@@ -11,7 +11,7 @@ public class ArgsName {
     public String get(String key) {
         String res = values.get(key);
         if (res == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Nonexistent argument : " + key);
         }
         return res;
     }
@@ -24,7 +24,7 @@ public class ArgsName {
                             || data[0].isEmpty()
                             || !data[0].startsWith("-")
                             || data[1].isEmpty()) {
-                        throw new IllegalArgumentException("Invalid arguments");
+                        throw new IllegalArgumentException("Invalid program arguments. Use [-<KEY>=<VALUE>]");
                     }
                     values.put(data[0].substring(1), data[1]);
                 });
