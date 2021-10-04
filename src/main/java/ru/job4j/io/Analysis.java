@@ -7,7 +7,8 @@ public class Analysis {
         try (BufferedReader br = new BufferedReader(new FileReader(source));
              PrintWriter out = new PrintWriter(new FileOutputStream(target))) {
             boolean isAvailable = true;
-            for (String notice = br.readLine(); notice != null; notice = br.readLine()) {
+            while (br.ready()) {
+                String notice = br.readLine();
                 String[] data = notice.split(" ");
                 int status = Integer.parseInt(data[0]);
                 String date = data[1];
