@@ -3,6 +3,7 @@ package ru.job4j.io;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class ArgsName {
 
@@ -34,6 +35,10 @@ public class ArgsName {
         ArgsName names = new ArgsName();
         names.parse(args);
         return names;
+    }
+
+    public Set<String> keySet() {
+        return values.keySet();
     }
 
     public static void main(String[] args) {

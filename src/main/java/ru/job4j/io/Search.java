@@ -20,11 +20,11 @@ public class Search {
         Path path = Path.of(args[0]);
         if (!path.toFile().exists()) {
             throw new IllegalArgumentException(
-                    String.format("Root does not exist %s", path.toFile().getAbsoluteFile()));
+                    String.format("Root does not exist %s", path));
         }
         if (!path.toFile().isDirectory()) {
             throw new IllegalArgumentException(
-                    String.format("Root is not directory %s", path.toFile().getAbsoluteFile()));
+                    String.format("Root is not directory %s", path));
         }
     }
 
