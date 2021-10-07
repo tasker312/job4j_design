@@ -5,23 +5,22 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DuplicatesVisitor extends SimpleFileVisitor<Path> {
-    private final Map<FileProperty, FileProperty> files = new HashMap<>();
+    private final Map<FileProperty, List<Path>> files = new HashMap<>();
 
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-        FileProperty currentFile = new FileProperty(file.toFile().length(), file.toFile().getName(), file);
-        if (files.putIfAbsent(currentFile, currentFile) != null) {
-            var oldFile = files.get(currentFile);
-            System.out.printf("File %s is duplicate for %s (%dKB).%n",
-                    file.toFile().getAbsolutePath(),
-                    oldFile.getPath(),
-                    oldFile.getSize() / 1024
-            );
-        }
+        FileProperty currentFile = new FileProperty(file.toFile().length(), file.toFile().getName());
+        files.computeIfAbsent(currentFile, key -> new ArrayList<>()).add(file);
         return super.visitFile(file, attrs);
+    }
+
+    public Map<FileProperty, List<Path>> getFiles() {
+        return files;
     }
 }
