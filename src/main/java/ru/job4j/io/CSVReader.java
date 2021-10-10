@@ -22,19 +22,22 @@ public class CSVReader {
     private List<List<String>> readData(String path, String delimiter) {
         List<List<String>> data = new ArrayList<>();
         try (Scanner in = new Scanner(new File(path))) {
-            Scanner lineScanner;
             while (in.hasNextLine()) {
-                lineScanner = new Scanner(in.nextLine()).useDelimiter(delimiter);
-                List<String> current = new ArrayList<>();
-                while (lineScanner.hasNext()) {
-                    current.add(lineScanner.next());
-                }
-                data.add(current);
+                data.add(parseStringToTokens(in.nextLine(), delimiter));
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
         return data;
+    }
+
+    private List<String> parseStringToTokens(String str, String delimiter) {
+        Scanner lineScanner = new Scanner(str).useDelimiter(delimiter);
+        List<String> tokens = new ArrayList<>();
+        while (lineScanner.hasNext()) {
+            tokens.add(lineScanner.next());
+        }
+        return tokens;
     }
 
     private List<String> filter(List<List<String>> data) {
