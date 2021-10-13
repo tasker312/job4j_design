@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class FileFinder {
     private ArgsName arg;
@@ -45,9 +44,13 @@ public class FileFinder {
                 String maskName = name.replaceAll("\\.", "\\\\.")
                         .replaceAll("\\?", ".{1}")
                         .replaceAll("\\*", ".*");
-                yield path -> Pattern.matches(maskName, path.toFile().getName());
+                Pattern pattern = Pattern.compile(maskName);
+                yield path -> pattern.matcher(path.toFile().getName()).matches();
             }
-            case "regex" -> path -> Pattern.matches(name, path.toFile().getName());
+            case "regex" -> {
+                Pattern pattern = Pattern.compile(name);
+                yield path -> pattern.matcher(path.toFile().getName()).matches();
+            }
             default -> throw new IllegalArgumentException();
         };
     }
