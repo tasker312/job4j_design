@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<order>
+    <price>60.5</price>
+    <comment>Hello</comment>
+    <client>
+        <name>Ivan</name>
+        <phone>88888888888</phone>
+    </client>
+    <products>
+        <product>
+            <name>Milk</name>
+            <price>20.5</price>
+        </product>
+        <product>
+            <name>Chocolate</name>
+            <price>40.0</price>
+        </product>
+    </products>
+    <isFinished>false</isFinished>
+</order>
