@@ -1,0 +1,1 @@
+update student set age = 20;
