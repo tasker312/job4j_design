@@ -12,22 +12,18 @@ public class TableEditor implements AutoCloseable {
 
     private final Properties properties;
 
-    public TableEditor(Properties properties) {
+    public TableEditor(Properties properties) throws SQLException, ClassNotFoundException {
         this.properties = properties;
         initConnection();
     }
 
-    private void initConnection() {
-        try {
-            Class.forName("org.postgresql.Driver");
-            connection = DriverManager.getConnection(
-                    properties.getProperty("url"),
-                    properties.getProperty("login"),
-                    properties.getProperty("password")
-            );
-        } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
-        }
+    private void initConnection() throws ClassNotFoundException, SQLException {
+        Class.forName(properties.getProperty("driver"));
+        connection = DriverManager.getConnection(
+                properties.getProperty("url"),
+                properties.getProperty("login"),
+                properties.getProperty("password")
+        );
     }
 
     public void createTable(String tableName) {
@@ -118,6 +114,7 @@ public class TableEditor implements AutoCloseable {
         Config config = new Config(path);
         config.load();
         Properties properties = new Properties();
+        properties.put("driver", config.value("driver"));
         properties.put("url", config.value("url"));
         properties.put("login", config.value("login"));
         properties.put("password", config.value("password"));
