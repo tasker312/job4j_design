@@ -5,10 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.Scanner;
+import java.util.*;
 
 public class ImportDB {
 
@@ -25,14 +22,18 @@ public class ImportDB {
         try (BufferedReader rd = new BufferedReader(new FileReader(dump))) {
             rd.lines()
                     .map(this::userByLine)
+                    .filter(Objects::nonNull)
                     .forEach(users::add);
         }
         return users;
     }
 
     private User userByLine(String data) {
-        Scanner sc = new Scanner(data).useDelimiter(";");
-        return new User(sc.next(), sc.next());
+        try (Scanner sc = new Scanner(data).useDelimiter(";")) {
+            return new User(sc.next(), sc.next());
+        } catch (NoSuchElementException ignored) {
+            return null;
+        }
     }
 
     public void save(List<User> users) throws ClassNotFoundException, SQLException {
