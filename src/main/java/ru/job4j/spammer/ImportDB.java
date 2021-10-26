@@ -22,18 +22,17 @@ public class ImportDB {
         try (BufferedReader rd = new BufferedReader(new FileReader(dump))) {
             rd.lines()
                     .map(this::userByLine)
-                    .filter(Objects::nonNull)
                     .forEach(users::add);
         }
         return users;
     }
 
     private User userByLine(String data) {
-        try (Scanner sc = new Scanner(data).useDelimiter(";")) {
-            return new User(sc.next(), sc.next());
-        } catch (NoSuchElementException ignored) {
-            return null;
+        String[] args = data.split(";");
+        if (args.length != 2) {
+            throw new IllegalArgumentException("Invalid arguments : " + data);
         }
+        return new User(args[0], args[1]);
     }
 
     public void save(List<User> users) throws ClassNotFoundException, SQLException {
