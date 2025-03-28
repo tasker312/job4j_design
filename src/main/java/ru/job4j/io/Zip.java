@@ -5,17 +5,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class Zip {
-
-    private static final Map<String, String> ARGS = Map.of(
-            "d", "directory for archive '-d=M:\\Java'",
-            "e", "excluded file type '-e=.class'",
-            "o", "output archive '-o=project.zip'"
-    );
 
     public void packFiles(List<Path> sources, File target) {
         try (ZipOutputStream zip = new ZipOutputStream(
@@ -47,12 +40,6 @@ public class Zip {
     }
 
     public static void main(String[] args) {
-//        Zip zip = new Zip();
-//        zip.packSingleFile(
-//                new File("pom.xml"),
-//                new File("pom.zip")
-//        );
-
         ArgsName argsName = ArgsName.of(args);
         Zip zip = new Zip();
         zip.validateArgs(argsName);

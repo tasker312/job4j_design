@@ -5,14 +5,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 
 public class DuplicatesFinder {
     public static void main(String[] args) throws IOException {
-//        DuplicatesVisitor visitor = new DuplicatesVisitor(
-//                ((Predicate<Path>) x -> !x.toString().contains("$RECYCLE.BIN"))
-//                        .and(x -> !x.toString().contains("AppData"))
-//        );
         DuplicatesVisitor visitor = new DuplicatesVisitor();
         Files.walkFileTree(Path.of("M:\\"), visitor);
         printDuplicates(visitor.getDuplicates());
