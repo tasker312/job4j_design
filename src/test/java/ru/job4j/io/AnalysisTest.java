@@ -1,22 +1,19 @@
 package ru.job4j.io;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.*;
+import java.nio.file.Path;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class AnalysisTest {
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+class AnalysisTest {
 
     @Test
-    public void whenAlwaysAvailable() throws IOException {
-        File source = folder.newFile("source.csv");
-        File target = folder.newFile("target.csv");
+    public void whenAlwaysAvailable(@TempDir Path tempDir) throws IOException {
+        File source = tempDir.resolve("source.csv").toFile();
+        File target = tempDir.resolve("target.csv").toFile();
         try (PrintWriter pw = new PrintWriter(source)) {
             pw.println("200 10:56:01");
             pw.println("200 10:57:01");
@@ -30,13 +27,13 @@ public class AnalysisTest {
         try (BufferedReader br = new BufferedReader(new FileReader(target))) {
             br.lines().forEach(sb::append);
         }
-        assertThat(sb.toString(), is(""));
+        assertThat(sb.toString()).isEqualTo("");
     }
 
     @Test
-    public void when1Diapason() throws IOException {
-        File source = folder.newFile("source.csv");
-        File target = folder.newFile("target.csv");
+    public void when1Diapason(@TempDir Path tempDir) throws IOException {
+        File source = tempDir.resolve("source.csv").toFile();
+        File target = tempDir.resolve("target.csv").toFile();
         try (PrintWriter pw = new PrintWriter(source)) {
             pw.println("200 10:56:01");
             pw.println("500 10:57:01");
@@ -50,13 +47,13 @@ public class AnalysisTest {
         try (BufferedReader br = new BufferedReader(new FileReader(target))) {
             br.lines().forEach(sb::append);
         }
-        assertThat(sb.toString(), is("10:57:01;10:59:01;" + "11:01:02;11:02:02;"));
+        assertThat(sb.toString()).isEqualTo("10:57:01;10:59:01;" + "11:01:02;11:02:02;");
     }
 
     @Test
-    public void when2Diapasons() throws IOException {
-        File source = folder.newFile("source.csv");
-        File target = folder.newFile("target.csv");
+    public void when2Diapasons(@TempDir Path tempDir) throws IOException {
+        File source = tempDir.resolve("source.csv").toFile();
+        File target = tempDir.resolve("target.csv").toFile();
         try (PrintWriter pw = new PrintWriter(source)) {
             pw.println("200 10:56:01");
             pw.println("500 10:57:01");
@@ -70,13 +67,13 @@ public class AnalysisTest {
         try (BufferedReader br = new BufferedReader(new FileReader(target))) {
             br.lines().forEach(sb::append);
         }
-        assertThat(sb.toString(), is("10:57:01;11:02:02;"));
+        assertThat(sb.toString()).isEqualTo("10:57:01;11:02:02;");
     }
 
     @Test
-    public void whenNotAvailableNow() throws IOException {
-        File source = folder.newFile("source.csv");
-        File target = folder.newFile("target.csv");
+    public void whenNotAvailableNow(@TempDir Path tempDir) throws IOException {
+        File source = tempDir.resolve("source.csv").toFile();
+        File target = tempDir.resolve("target.csv").toFile();
         try (PrintWriter pw = new PrintWriter(source)) {
             pw.println("200 10:56:01");
             pw.println("500 10:57:01");
@@ -86,6 +83,6 @@ public class AnalysisTest {
         try (BufferedReader br = new BufferedReader(new FileReader(target))) {
             br.lines().forEach(sb::append);
         }
-        assertThat(sb.toString(), is("10:57:01;"));
+        assertThat(sb.toString()).isEqualTo("10:57:01;");
     }
 }

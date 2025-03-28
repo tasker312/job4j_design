@@ -1,4 +1,9 @@
 # job4j_design
 
-[![Build Status](https://app.travis-ci.com/tasker312/job4j_design.svg?branch=master)](https://app.travis-ci.com/tasker312/job4j_design)
-[![codecov](https://codecov.io/gh/tasker312/job4j_design/branch/master/graph/badge.svg?token=QXVR49Z6RN)](https://codecov.io/gh/tasker312/job4j_design)
+Темы проекта:  
+2.1 Структуры данных и алгоритмы  
+2.2 Ввод-вывод  
+2.3 SQL, JDBC  
+2.4 Garbage Collection  
+2.5 Чистая архитектура  
+2.6 Алгоритмы  

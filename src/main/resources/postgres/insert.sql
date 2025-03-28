@@ -1,1 +1,0 @@
-insert into student(name, age) values ('Ivan', 100);

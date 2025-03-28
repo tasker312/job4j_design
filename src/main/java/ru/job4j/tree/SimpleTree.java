@@ -13,34 +13,34 @@ public class SimpleTree<E> implements Tree<E> {
     @Override
     public boolean add(E parent, E child) {
         var parentNode = findBy(parent);
-        if (parentNode.isPresent() && findBy(child).isEmpty()) {
-            parentNode.get().getChildren().add(new Node<>(child));
-            return true;
+        if (parentNode.isEmpty() || findBy(child).isPresent()) {
+            return false;
         }
-        return false;
+        parentNode.get().children.add(new Node<>(child));
+        return true;
     }
 
     @Override
     public Optional<Node<E>> findBy(E value) {
-        return findByPredicate(eNode -> eNode.getValue().equals(value));
-    }
-
-    private Optional<Node<E>> findByPredicate(Predicate<Node<E>> condition) {
-        Optional<Node<E>> rsl = Optional.empty();
-        Queue<Node<E>> data = new LinkedList<>();
-        data.offer(this.root);
-        while (!data.isEmpty()) {
-            Node<E> el = data.poll();
-            if (condition.test(el)) {
-                rsl = Optional.of(el);
-                break;
-            }
-            data.addAll(el.getChildren());
-        }
-        return rsl;
+        return findByPredicate(node -> node.value.equals(value));
     }
 
     public boolean isBinary() {
-        return findByPredicate(eNode -> eNode.getChildren().size() > 2).isEmpty();
+        return findByPredicate(node -> node.children.size() > 2).isEmpty();
+    }
+
+    private Optional<Node<E>> findByPredicate(Predicate<Node<E>> condition) {
+        Optional<Node<E>> result = Optional.empty();
+        Queue<Node<E>> data = new LinkedList<>();
+        data.offer(this.root);
+        while (!data.isEmpty()) {
+            Node<E> element = data.poll();
+            if (condition.test(element)) {
+                result = Optional.of(element);
+                break;
+            }
+            data.addAll(element.children);
+        }
+        return result;
     }
 }

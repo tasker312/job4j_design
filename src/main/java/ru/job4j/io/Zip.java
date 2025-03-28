@@ -1,20 +1,26 @@
 package ru.job4j.io;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class Zip {
-    private static ArgsName argsNames;
 
-    public static void packFiles(List<Path> sources, Path target) {
+    private static final Map<String, String> ARGS = Map.of(
+            "d", "directory for archive '-d=M:\\Java'",
+            "e", "excluded file type '-e=.class'",
+            "o", "output archive '-o=project.zip'"
+    );
+
+    public void packFiles(List<Path> sources, File target) {
         try (ZipOutputStream zip = new ZipOutputStream(
                 new BufferedOutputStream(
-                        new FileOutputStream(target.toFile())
+                        new FileOutputStream(target)
                 ))) {
             for (Path source : sources) {
                 zip.putNextEntry(new ZipEntry(source.toFile().getPath().substring(2)));
@@ -29,40 +35,50 @@ public class Zip {
         }
     }
 
-    public static void main(String[] args) throws IOException {
-        validation(args);
-        Path root = Path.of(argsNames.get("d"));
-        List<Path> files = searchFiles(root);
-        packFiles(files, Path.of(argsNames.get("o")));
+    public void packSingleFile(File source, File target) {
+        try (ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(target)))) {
+            zip.putNextEntry(new ZipEntry(source.getPath()));
+            try (BufferedInputStream output = new BufferedInputStream(new FileInputStream(source))) {
+                zip.write(output.readAllBytes());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    private static List<Path> searchFiles(Path root) throws IOException {
-        return Search.search(
-                        root,
-                        path -> !path.toFile().getName().endsWith("." + argsNames.get("e"))
-                ).stream()
-                    .map(String::valueOf)
-                    .map(str -> "." + str.substring(argsNames.get("d").length()))
-                    .map(Path::of)
-                    .collect(Collectors.toList());
+    public static void main(String[] args) {
+//        Zip zip = new Zip();
+//        zip.packSingleFile(
+//                new File("pom.xml"),
+//                new File("pom.zip")
+//        );
+
+        ArgsName argsName = ArgsName.of(args);
+        Zip zip = new Zip();
+        zip.validateArgs(argsName);
+        List<Path> paths = null;
+        try {
+            Search searcher = new Search();
+            paths = searcher.search(Paths.get(argsName.get("d")), x -> !x.toFile().getName().endsWith(argsName.get("e")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        zip.packFiles(paths, new File(argsName.get("o")));
     }
 
-    private static void validation(String[] args) {
-        argsNames = ArgsName.of(args);
-        Set<String> argsKeys = argsNames.keySet();
-        if (!(args.length == 3
-                && argsKeys.contains("d")
-                && argsKeys.contains("e")
-                && argsKeys.contains("o"))) {
+    private void validateArgs(ArgsName args) {
+        try {
+            boolean isValid = true;
+            isValid &= Files.isDirectory(Paths.get(args.get("d")));
+            isValid &= args.get("e").startsWith(".");
+            isValid &= args.get("o").endsWith(".zip");
+            if (!isValid) {
+                throw new IllegalArgumentException();
+            }
+        } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid arguments."
-                    + "Use java -jar Zip.jar -d=<DIRECTORY> -e=<FILE_EXTENSION> -o=<TARGET_NAME>");
-        }
-        Path root = Path.of(argsNames.get("d"));
-        if (!root.toFile().exists()) {
-            throw new IllegalArgumentException(String.format("Root does not exist%s", root));
-        }
-        if (!root.toFile().isDirectory()) {
-            throw new IllegalArgumentException(String.format("Root is not directory %s", root));
+                    + e.getMessage() + " "
+                    + " Use java -jar Zip.jar -d=<DIRECTORY> -e=.<FILE_EXTENSION> -o=<TARGET_NAME>.zip");
         }
     }
 }

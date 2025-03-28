@@ -9,36 +9,40 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class EchoServer {
-    private static final Logger LOG = LoggerFactory.getLogger(UsageLog4j.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(EchoServer.class.getName());
 
     public static void main(String[] args) {
         try (ServerSocket server = new ServerSocket(9000)) {
             while (!server.isClosed()) {
                 Socket socket = server.accept();
-                try (OutputStream out = socket.getOutputStream();
-                     BufferedReader in = new BufferedReader(
+                try (OutputStream output = socket.getOutputStream();
+                     BufferedReader input = new BufferedReader(
                              new InputStreamReader(socket.getInputStream()))) {
-                    out.write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
-                    if (in.ready()) {
-                        String message = extractMessage(in.readLine());
+                    output.write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
+                    for (String string = input.readLine(); string != null && !string.isEmpty(); string = input.readLine()) {
+                        System.out.println(string);
+                        String message = extractMessage(string);
                         switch (message) {
-                            case "Hello" -> out.write("Hello!".getBytes());
+                            case "Hello" -> output.write("Hello!".getBytes());
                             case "Exit" -> server.close();
-                            default -> out.write(message.getBytes());
+                            default -> output.write(message.getBytes());
                         }
                     }
-                    out.flush();
+                    output.flush();
                 }
             }
         } catch (IOException e) {
-            LOG.error("IOException", e);
+            LOG.error(e.getMessage(), e);
         }
     }
 
     private static String extractMessage(String line) {
-        return line.contains("/?msg=")
-                ? line.substring(line.indexOf("/?msg=") + 6, line.lastIndexOf(' ')) : "";
+        Pattern pattern = Pattern.compile("\\s/\\?msg=(.+)\\s");
+        Matcher matcher = pattern.matcher(line);
+        return matcher.find() ? matcher.group(1) : "";
     }
 }

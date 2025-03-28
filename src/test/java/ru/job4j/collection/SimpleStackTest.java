@@ -1,41 +1,40 @@
 package ru.job4j.collection;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-
-import org.junit.Test;
-
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import java.util.NoSuchElementException;
 
-public class SimpleStackTest {
-    @Test
-    public void whenPushThenPoll() {
-        SimpleStack<Integer> stack = new SimpleStack<>();
-        stack.push(1);
-        assertThat(stack.pop(), is(1));
-    }
+class SimpleStackTest {
+    private SimpleStack<Integer> stack;
 
-    @Test
-    public void whenPushPopThenPushPop() {
-        SimpleStack<Integer> stack = new SimpleStack<>();
-        stack.push(1);
-        stack.pop();
-        stack.push(2);
-        assertThat(stack.pop(), is(2));
-    }
-
-    @Test
-    public void whenPushPushThenPopPop() {
-        SimpleStack<Integer> stack = new SimpleStack<>();
+    @BeforeEach
+    void init() {
+        stack = new SimpleStack<>();
         stack.push(1);
         stack.push(2);
-        stack.pop();
-        assertThat(stack.pop(), is(1));
     }
 
-    @Test(expected = NoSuchElementException.class)
-    public void whenPopEmptyWhenException() {
-        SimpleStack<Integer> stack = new SimpleStack<>();
+    @Test
+    void whenPushThenPoll() {
+        stack.push(3);
+        stack.push(4);
+        assertThat(stack.pop()).isEqualTo(4);
+    }
+
+    @Test
+    void whenPushPollThenPushPoll() {
         stack.pop();
+        stack.push(3);
+        assertThat(stack.pop()).isEqualTo(3);
+    }
+
+    @Test
+    void whenPushPushThenPollPoll() {
+        stack.pop();
+        assertThat(stack.pop()).isEqualTo(1);
+        assertThatThrownBy(stack::pop)
+                .isInstanceOf(NoSuchElementException.class);
     }
 }

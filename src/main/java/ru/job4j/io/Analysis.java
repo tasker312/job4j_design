@@ -1,31 +1,33 @@
 package ru.job4j.io;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.PrintWriter;
 
 public class Analysis {
+
     public void unavailable(String source, String target) {
         try (BufferedReader br = new BufferedReader(new FileReader(source));
-             PrintWriter out = new PrintWriter(new FileOutputStream(target))) {
+             PrintWriter pw = new PrintWriter(new FileOutputStream(target))) {
             boolean isAvailable = true;
             while (br.ready()) {
-                String notice = br.readLine();
-                String[] data = notice.split(" ");
-                int status = Integer.parseInt(data[0]);
-                String date = data[1];
-                if ((status == 400 || status == 500) && isAvailable) {
-                    out.print(date + ";");
+                String[] data = br.readLine().split(" ");
+                if (isAvailable && ("400".equals(data[0]) || "500".equals(data[0]))) {
+                    pw.print(data[1] + ";");
                     isAvailable = false;
-                } else if ((status == 200 || status == 300) && !isAvailable) {
-                    out.println(date + ";");
+                } else if (!isAvailable && ("200".equals(data[0]) || "300".equals(data[0]))) {
+                    pw.println(data[1] + ";");
                     isAvailable = true;
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public static void main(String[] args) {
-        new Analysis().unavailable("data/server_log.csv", "data/unavailable.csv");
+        Analysis analysis = new Analysis();
+        analysis.unavailable("data/server.log", "data/target.csv");
     }
 }

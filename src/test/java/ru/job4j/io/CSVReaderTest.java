@@ -1,19 +1,18 @@
 package ru.job4j.io;
 
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.nio.file.Files;
 
-public class CSVReaderTest {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+class CSVReaderTest {
 
     @Test
-    public void whenFilterTwoColumns() throws Exception {
+    void whenFilterTwoColumns(@TempDir Path folder) throws Exception {
         String data = String.join(
                 System.lineSeparator(),
                 "name;age;last_name;education",
@@ -21,20 +20,47 @@ public class CSVReaderTest {
                 "Jack;25;Johnson;Undergraduate",
                 "William;30;Brown;Secondary special"
         );
-        File file = temporaryFolder.newFile("source.csv");
-        File target = temporaryFolder.newFile("target.csv");
+        File file = folder.resolve("source.csv").toFile();
+        File target = folder.resolve("target.csv").toFile();
+        ArgsName argsName = ArgsName.of(new String[]{
+                "-path=" + file.getAbsolutePath(), "-delimiter=;",
+                "-out=" + target.getAbsolutePath(), "-filter=name,education"});
         Files.writeString(file.toPath(), data);
         String expected = String.join(
                 System.lineSeparator(),
-                "name;age",
-                "Tom;20",
-                "Jack;25",
-                "William;30"
+                "name;education",
+                "Tom;Bachelor",
+                "Jack;Undergraduate",
+                "William;Secondary special"
         ).concat(System.lineSeparator());
-        CSVReader.main(new String[]{
-                        "-path=" + file.getAbsolutePath(), "-delimiter=;",
-                        "-out=" + target.getAbsolutePath(), "-filter=name,age"
+        CSVReader.handle(argsName);
+        assertThat(Files.readString(target.toPath())).isEqualTo(expected);
+    }
+
+    @Test
+    void whenFilterThreeColumns(@TempDir Path folder) throws Exception {
+        String data = String.join(
+                System.lineSeparator(),
+                "name,age,last_name,education",
+                "Tom,20,Smith,Bachelor",
+                "Jack,25,Johnson,Undergraduate",
+                "William,30,Brown,Secondary special"
+        );
+        File file = folder.resolve("source.csv").toFile();
+        File target = folder.resolve("target.csv").toFile();
+        ArgsName argsName = ArgsName.of(new String[]{
+                "-path=" + file.getAbsolutePath(), "-delimiter=,",
+                "-out=" + target.getAbsolutePath(), "-filter=education,age,last_name"
         });
-        Assert.assertEquals(expected, Files.readString(target.toPath()));
+        Files.writeString(file.toPath(), data);
+        String expected = String.join(
+                System.lineSeparator(),
+                "education,age,last_name",
+                "Bachelor,20,Smith",
+                "Undergraduate,25,Johnson",
+                "Secondary special,30,Brown"
+        ).concat(System.lineSeparator());
+        CSVReader.handle(argsName);
+        assertThat(Files.readString(target.toPath())).isEqualTo(expected);
     }
 }

@@ -1,44 +1,53 @@
 package ru.job4j.io;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class ArgsName {
 
     private final Map<String, String> values = new HashMap<>();
 
     public String get(String key) {
-        String res = values.get(key);
-        if (res == null) {
-            throw new IllegalArgumentException("Nonexistent argument : " + key);
+        String value = values.get(key);
+        if (value == null) {
+            throw new IllegalArgumentException(String.format("This key: '%s' is missing", key));
         }
-        return res;
+        return values.get(key);
     }
 
     private void parse(String[] args) {
-        Arrays.stream(args)
-                .map(arg -> arg.split("="))
-                .forEach(data -> {
-                    if (data.length != 2
-                            || data[0].isEmpty()
-                            || !data[0].startsWith("-")
-                            || data[1].isEmpty()) {
-                        throw new IllegalArgumentException("Invalid program arguments. Use [-<KEY>=<VALUE>]");
-                    }
-                    values.put(data[0].substring(1), data[1]);
-                });
+        if (args.length == 0) {
+            throw new IllegalArgumentException("Arguments not passed to program");
+        }
+        for (String entry : args) {
+            if (!entry.startsWith("-")) {
+                throw new IllegalArgumentException(
+                        String.format("Error: This argument '%s' does not start with a '-' character", entry));
+            }
+            String[] data = entry.split("=", 2);
+            if (data.length != 2) {
+                throw new IllegalArgumentException(
+                        String.format("Error: This argument '%s' does not contain an equal sign", entry)
+                );
+            }
+            if (data[0].length() == 1) {
+                throw new IllegalArgumentException(
+                        String.format("Error: This argument '%s' does not contain a key", entry)
+                );
+            }
+            if (data[1].isEmpty()) {
+                throw new IllegalArgumentException(
+                        String.format("Error: This argument '%s' does not contain a value", entry)
+                );
+            }
+            values.put(data[0].substring(1), data[1]);
+        }
     }
 
     public static ArgsName of(String[] args) {
         ArgsName names = new ArgsName();
         names.parse(args);
         return names;
-    }
-
-    public Set<String> keySet() {
-        return values.keySet();
     }
 
     public static void main(String[] args) {

@@ -4,19 +4,16 @@ import java.io.File;
 
 public class Dir {
     public static void main(String[] args) {
-        if (args.length == 0) {
-            throw new IllegalArgumentException("Root folder is null. Usage java -jar dir.jar ROOT_FOLDER.");
-        }
-        File file = new File(args[0]);
+        File file = new File("M:\\Java\\Projects");
         if (!file.exists()) {
-            throw new IllegalArgumentException(String.format("Not exist %s", file.getAbsoluteFile()));
+            throw new IllegalArgumentException(String.format("Директория не существует: %s", file.getAbsoluteFile()));
         }
         if (!file.isDirectory()) {
-            throw new IllegalArgumentException(String.format("Not directory %s", file.getAbsoluteFile()));
+            throw new IllegalArgumentException(String.format("Это не директория: %s", file.getAbsoluteFile()));
         }
-        System.out.printf("size : %s%n", file.getTotalSpace());
-        for (File subFile : file.listFiles()) {
-            System.out.printf("%s : %d%n", subFile.getName(), subFile.length());
+        System.out.println(String.format("Размер директории: %s", file.getTotalSpace()));
+        for (File subfile : file.listFiles()) {
+            System.out.printf("%s : %d%n", subfile.getName(), subfile.length());
         }
     }
 }

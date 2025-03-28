@@ -2,28 +2,26 @@ package ru.job4j.io;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.util.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
 
 public class CSVReader {
-    private ArgsName argsName;
-
-    public static void main(String[] args) {
-        CSVReader reader = new CSVReader();
-        reader.validation(args);
-        var data = reader.readData(
-                reader.argsName.get("path"),
-                reader.argsName.get("delimiter")
-        );
-        var result = reader.filter(data);
-        reader.print(result);
+    public static void handle(ArgsName argsName) throws Exception {
+        var data = readData(argsName.get("path"), argsName.get("delimiter"));
+        var filtered = filter(data, argsName.get("filter"));
+        print(filtered, argsName.get("out"), argsName.get("delimiter"));
     }
 
-    private List<List<String>> readData(String path, String delimiter) {
+    private static List<List<String>> readData(String path, String delimiter) {
         List<List<String>> data = new ArrayList<>();
-        try (Scanner in = new Scanner(new File(path))) {
-            while (in.hasNextLine()) {
-                data.add(parseStringToTokens(in.nextLine(), delimiter));
+        try (Scanner lineScanner = new Scanner(new File(path))) {
+            while (lineScanner.hasNextLine()) {
+                Scanner itemScanner = new Scanner(lineScanner.nextLine()).useDelimiter(delimiter);
+                data.add(itemScanner.tokens().toList());
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -31,63 +29,61 @@ public class CSVReader {
         return data;
     }
 
-    private List<String> parseStringToTokens(String str, String delimiter) {
-        Scanner lineScanner = new Scanner(str).useDelimiter(delimiter);
-        List<String> tokens = new ArrayList<>();
-        while (lineScanner.hasNext()) {
-            tokens.add(lineScanner.next());
-        }
-        return tokens;
+    private static List<List<String>> filter(List<List<String>> data, String columns) {
+        List<Integer> columnIndexes = extractColumnIndexes(data.get(0), columns);
+        return data.stream()
+                .map(line -> columnIndexes.stream()
+                        .map(line::get)
+                        .toList()
+                )
+                .toList();
     }
 
-    private List<String> filter(List<List<String>> data) {
-        List<Integer> columns = extractColumnNumbers(data.get(0));
-        List<String> res = new ArrayList<>();
-        data.forEach(list -> {
-            StringJoiner sj = new StringJoiner(";");
-            columns.forEach(col -> sj.add(list.get(col)));
-            res.add(sj.toString());
-        });
-        return res;
+    private static List<Integer> extractColumnIndexes(List<String> head, String columns) {
+        return Arrays.stream(columns.split(","))
+                .map(head::indexOf)
+                .toList();
     }
 
-    private List<Integer> extractColumnNumbers(List<String> head) {
-        List<Integer> columns = new ArrayList<>();
-        for (int i = 0; i < head.size(); i++) {
-            if (argsName.get("filter").contains(head.get(i))) {
-                columns.add(i);
-            }
-        }
-        return columns;
-    }
-
-    private void print(List<String> strings) {
+    private static void print(List<List<String>> data, String output, String delimiter) {
         try (OutputStream outputStream =
-                     "stdout".equals(argsName.get("out"))
-                             ? System.out : new BufferedOutputStream(new FileOutputStream(argsName.get("out")));
-             PrintWriter pw = new PrintWriter(
-                     new OutputStreamWriter(outputStream, StandardCharsets.UTF_8))) {
-            strings.forEach(pw::println);
+                     "stdout".equals(output) ? System.out : new BufferedOutputStream(new FileOutputStream(output));
+             PrintWriter pw = new PrintWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8))
+        ) {
+            data.stream()
+                    .map(line -> String.join(delimiter, line))
+                    .forEach(pw::println);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void validation(String[] args) {
-        argsName = ArgsName.of(args);
-        Set<String> argsKeys = argsName.keySet();
-        if (!(args.length == 4
-                && argsKeys.contains("path")
-                && argsKeys.contains("delimiter")
-                && argsKeys.contains("out")
-                && argsKeys.contains("filter"))) {
+    public static void main(String[] args) {
+        ArgsName argsName = ArgsName.of(args);
+        validateArgs(argsName);
+        try {
+            handle(argsName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void validateArgs(ArgsName args) {
+        try {
+            boolean isValid = true;
+            isValid &= Files.isRegularFile(Paths.get(args.get("path")));
+            isValid &= args.get("path").endsWith(".csv");
+            isValid &= !args.get("delimiter").isEmpty();
+            isValid &= !args.get("out").isEmpty();
+            isValid &= !args.get("filter").isEmpty();
+            if (!isValid) {
+                throw new IllegalArgumentException("test");
+            }
+        } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid arguments. "
+                    + e.getMessage() + ". "
                     + "Use java -jar CSVReader.jar -path=<INPUT_FILE> -delimiter=<DELIMITER> "
                     + "-out=<stdout / OUTPUT_FILE> -filter=COLUMN1[,COLUMN2...]");
-        }
-        Path path = Path.of(argsName.get("path"));
-        if (!path.toFile().exists()) {
-            throw new IllegalArgumentException(String.format("File does not exist%s", path));
         }
     }
 }
