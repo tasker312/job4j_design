@@ -80,3 +80,40 @@ insert into products (name, producer, count, price)
 VALUES ('product_1', 'producer_1', 5, 100);
 insert into products (name, producer, count, price)
 VALUES ('product_2', 'producer_2', 10, 200);
+insert into products (name, producer, count, price)
+VALUES ('product_2', 'producer_2', 0, 200);
+
+
+
+create or replace function f_remove_empty_products()
+    returns integer
+    language 'plpgsql'
+as
+$$
+declare
+    removed integer;
+begin
+    delete
+    from products
+    where count = 0;
+    get diagnostics removed = row_count;
+    return removed;
+end;
+$$;
+
+select f_remove_empty_products();
+
+
+
+create or replace procedure p_remove_product_by_id(u_id integer)
+    language 'plpgsql'
+as
+$$
+begin
+    delete
+    from products
+    where id = u_id;
+end;
+$$;
+
+call p_remove_product_by_id(2);
