@@ -1,6 +1,6 @@
-package ru.job4j.ood.lsp.utils;
+package ru.job4j.ood.lsp.storage.utils;
 
-import ru.job4j.ood.lsp.products.Food;
+import ru.job4j.ood.lsp.storage.products.Food;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;

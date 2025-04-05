@@ -2,14 +2,15 @@ package ru.job4j.ood.lsp;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.job4j.ood.lsp.products.Apple;
-import ru.job4j.ood.lsp.products.Banana;
-import ru.job4j.ood.lsp.products.Food;
-import ru.job4j.ood.lsp.products.Pie;
-import ru.job4j.ood.lsp.store.Shop;
-import ru.job4j.ood.lsp.store.Store;
-import ru.job4j.ood.lsp.store.Trash;
-import ru.job4j.ood.lsp.store.Warehouse;
+import ru.job4j.ood.lsp.storage.ControlQuality;
+import ru.job4j.ood.lsp.storage.products.Apple;
+import ru.job4j.ood.lsp.storage.products.Banana;
+import ru.job4j.ood.lsp.storage.products.Food;
+import ru.job4j.ood.lsp.storage.products.Pie;
+import ru.job4j.ood.lsp.storage.store.Shop;
+import ru.job4j.ood.lsp.storage.store.Store;
+import ru.job4j.ood.lsp.storage.store.Trash;
+import ru.job4j.ood.lsp.storage.store.Warehouse;
 
 import java.time.LocalDate;
 import java.util.List;

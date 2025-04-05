@@ -1,7 +1,7 @@
 package ru.job4j.ood.lsp;
 
 import org.junit.jupiter.api.Test;
-import ru.job4j.ood.lsp.utils.Validator;
+import ru.job4j.ood.lsp.storage.utils.Validator;
 
 import java.time.LocalDate;
 

@@ -1,7 +1,7 @@
-package ru.job4j.ood.lsp.store;
+package ru.job4j.ood.lsp.storage.store;
 
-import ru.job4j.ood.lsp.utils.Validator;
-import ru.job4j.ood.lsp.products.Food;
+import ru.job4j.ood.lsp.storage.utils.Validator;
+import ru.job4j.ood.lsp.storage.products.Food;
 
 import java.time.LocalDate;
 
