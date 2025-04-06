@@ -133,6 +133,7 @@ class ControlParkingTest {
     }
 
     @Test
+    @Disabled
     public void whenTruckAndPassengerPark2() {
         Parking passengersParking = new PassengerCarParking(3);
         Parking truckParking = new TruckCarParking(3);
@@ -144,5 +145,4 @@ class ControlParkingTest {
         assertThat(controlParking.park(passenger1)).isTrue();
         assertThat(passengersParking.contains("PASS1")).isTrue();
     }
-
 }

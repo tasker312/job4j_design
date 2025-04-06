@@ -14,11 +14,21 @@ public class ControlParking {
     }
 
     public boolean park(Car car) {
+        for (Parking parking : parks) {
+            if (parking.park(car)) {
+                return true;
+            }
+        }
         return false;
     }
 
     public Optional<Car> unpark(String number) {
-        return Optional.empty();
+        return parks.stream()
+                .map(parking -> parking.unpark(number))
+                .filter(Optional::isPresent)
+                .findFirst()
+                .orElse(Optional.empty());
+
     }
 
     public int getFreeSpace() {

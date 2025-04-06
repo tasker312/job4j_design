@@ -6,34 +6,66 @@ import java.util.Optional;
 
 public abstract class AbstractParking implements Parking {
 
-    private final int capacity;
-    private final Car[] space;
+    final Car[] space;
 
     public AbstractParking(int capacity) {
-        this.capacity = capacity;
         this.space = new Car[capacity];
     }
 
     @Override
-    public boolean park(Car car) {
-        return false;
+    public final boolean park(Car car) {
+        if (!validate(car)) {
+            return false;
+        }
+        int index = getIndexForPark(car);
+        if (index == -1) {
+            return false;
+        }
+        parkTo(index, car);
+        return true;
     }
 
     @Override
     public Optional<Car> unpark(String number) {
-        return Optional.empty();
+        int index = getIndexByNumber(number);
+        if (index == -1) {
+            return Optional.empty();
+        }
+        return Optional.of(unparkFrom(index));
     }
 
     @Override
     public boolean contains(String number) {
-        return false;
+        return getIndexByNumber(number) != -1;
     }
 
-    private int getIndexByNumber(String number) {
+    abstract boolean validate(Car car);
+
+    abstract int getIndexForPark(Car car);
+
+    abstract void parkTo(int index, Car car);
+
+    abstract Car unparkFrom(int index);
+
+    int getIndexByNumber(String number) {
+        if (number == null) {
+            return -1;
+        }
+        for (int i = 0; i < space.length; i++) {
+            if (space[i] != null && space[i].getNumber().equals(number)) {
+                return i;
+            }
+        }
         return -1;
     }
 
     public int getFreeSpace() {
-        return 0;
+        int freeSpace = 0;
+        for (Car car : space) {
+            if (car == null) {
+                freeSpace++;
+            }
+        }
+        return freeSpace;
     }
 }
