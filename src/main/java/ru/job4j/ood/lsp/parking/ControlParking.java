@@ -4,6 +4,7 @@ import ru.job4j.ood.lsp.parking.cars.Car;
 import ru.job4j.ood.lsp.parking.park.Parking;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ControlParking {
     private final List<Parking> parks;
@@ -16,8 +17,8 @@ public class ControlParking {
         return false;
     }
 
-    public Car unpark(String number) {
-        return null;
+    public Optional<Car> unpark(String number) {
+        return Optional.empty();
     }
 
     public int getFreeSpace() {
